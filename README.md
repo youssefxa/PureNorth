@@ -84,3 +84,4 @@ python3 build.py
 Produces `purenorthvault-standalone.html` — the entire site including images in a
 single file you can email, put on a USB stick, or open anywhere offline.
 Deploy the multi-file version, not this one; it's ~900 KB and slower to load.
+# PureNorth
