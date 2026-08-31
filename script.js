@@ -131,7 +131,7 @@ function cardHTML(p) {
     ? `<img class="alt" src="${p.imgAlt}" alt="" loading="lazy" decoding="async">`
     : "";
   const specs = p.specs.map(s => `<li>${s}</li>`).join("");
-  const price = p.inStock && p.price ? money(p.price) : "Out of stock";
+  const price = p.inStock && p.price ? `<span class="card__price">${money(p.price)}</span>` : "";
   const cta = p.cta || "Inquire";
   const subject = encodeURIComponent(`${p.inStock ? "Inquiry" : "Request"}: ${p.name}`);
   const body = encodeURIComponent(`Item: ${p.name}\nSize / quantity:\nYour city:\n`);
@@ -148,7 +148,7 @@ function cardHTML(p) {
       <h3 class="card__name">${p.name}</h3>
       <ul class="card__specs">${specs}</ul>
       <div class="card__foot">
-        <span class="card__price${p.inStock ? "" : " is-gone"}">${price}</span>
+        ${price}
         <a class="card__cta" href="mailto:${EMAIL}?subject=${subject}&body=${body}">${cta}</a>
       </div>
     </div>
