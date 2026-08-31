@@ -1,89 +1,98 @@
-# Pure North Vault — website
+# Pure North Vault
 
-Static site. No build step, no dependencies, no server needed.
+Static multi-page site. No build step, no dependencies, no framework.
 
 ```
-index.html      all the page copy and structure
-styles.css      the whole design system (colours + type at the top)
-script.js       inventory data, filtering, form, compass interaction
-assets/         your product photos and logo
-build.py        optional: bundles everything into one shareable file
+index.html        Home: hero, categories, pre-order teaser
+about.html        Buy / Sell / Trade
+inventory.html    Filterable product grid
+preorders.html    30th Anniversary + sourcing blocks
+reviews.html      All Instagram reviews
+contact.html      Details + email form
+styles.css        The whole design system
+script.js         Product data, filters, countdown, form
+vercel.json       Clean URLs + image caching
+assets/           Logo and product photos
 ```
 
-## Run it
+## Run locally
 
-Double-click `index.html`, or from this folder:
+Open `index.html`, or use the Live Server extension in VS Code.
 
-```bash
-python3 -m http.server 8000     # then open http://localhost:8000
-```
+## Deploy
 
-## Deploy it
+Push to GitHub. Vercel picks it up automatically. Framework preset: **Other**,
+build command empty, output directory empty.
 
-Drag this whole folder onto **netlify.com/drop** or **vercel.com** — it's live in
-about ten seconds. Then point `purenorthvault.com` at it in the host's domain settings.
-GitHub Pages and Cloudflare Pages work the same way.
+`vercel.json` turns on clean URLs, so `/inventory.html` becomes `/inventory` in
+production. Links still work either way.
 
-## Add or remove a product
+## Change stock or pricing
 
-Everything on the inventory grid comes from the `PRODUCTS` array at the top of
-`script.js`. Copy a block, change the fields:
+Everything on the inventory page comes from the `PRODUCTS` array at the top of
+`script.js`.
 
 ```js
 {
-  line:  "footwear",              // "footwear" or "pokemon" — drives the filter chips
-  name:  "Air Jordan 4 Nigel Sylvester",
-  tag:   "Just in",               // badge on the photo, "" hides it
-  hot:   true,                    // true = solid magenta badge
-  specs: ["US 10", "DS", "OG box"],
-  price: 750,                     // a number in CAD, or null for "Price on request"
-  img:   "assets/aj4-nigel.jpg",
-  imgAlt:"assets/aj4-nigel-2.jpg",// optional second photo, shows on hover
-  alt:   "Air Jordan 4 Nigel Sylvester on a purple backdrop"
+  line:    "footwear",        // "footwear" or "tcg" - drives the filter chips
+  name:    "Kobe 4 Protro 'Draft Pack'",
+  tag:     "Footwear",        // badge, top left of the photo
+  hot:     true,              // true = solid magenta badge
+  specs:   ["US 9.5", "US 12"],
+  price:   260,               // CAD. Use null when out of stock.
+  inStock: true,              // false greys the card and hides the price
+  cta:     "Request your size", // optional, defaults to "Inquire"
+  img:     "assets/kobe4-gift-of-mamba.jpg",
+  imgAlt:  "assets/second-photo.jpg",  // optional, shows on hover
+  alt:     "Description for screen readers"
 }
 ```
 
-Drop the photo into `assets/` first. Shoot it on your usual backdrop and it'll
-match the rest of the grid automatically.
+**To mark something sold out:** set `inStock: false` and `price: null`.
+**To put it back:** set `inStock: true` and give it a price.
 
-## Change a review
+Add new photos to `assets/` first. Shoot them on your usual backdrop and they
+match the rest of the grid automatically. Keep filenames lowercase with hyphens,
+no spaces. Vercel's servers are case-sensitive even though your Mac is not.
 
-The reviews are plain HTML in `index.html` — search for `class="vouch"`.
-They're placed between sections on purpose so they break up the page.
-**Replace the placeholder text with real customer quotes before you go live.**
+## Change the pre-order release date
 
-## Change the email
+In `preorders.html`, find `data-release="2026-09-16T00:00:00-04:00"` and change
+the date. The countdown updates itself. Prices and item names are plain HTML
+just below it.
 
-The address appears in two places: the `EMAIL` constant at the top of `script.js`,
-and the `mailto:` links in `index.html`. Find-and-replace
-`inquires@purenorthvault.com` and you've got them all.
+## Add a review
 
-## The contact form
+Reviews live in two places:
 
-Right now it composes an email and opens the visitor's mail app — no backend, so
-nothing to host or pay for. If you'd rather have submissions land in an inbox
-automatically, sign up at formspree.io, then in `script.js` replace the
-`window.location.href = ...` line in the submit handler with a `fetch()` POST to
-your Formspree endpoint.
+- **reviews.html** has the full list. Copy a `<figure class="rev">` block and
+  swap the handle and text.
+- **Floating reviews** appear on the other pages as `<figure class="vouch">`.
+  Search for `class="vouch"` to find them.
+
+## Change the email address
+
+`inquires@purenorthvault.com` appears in the `EMAIL` constant in `script.js` and
+in `mailto:` links across the HTML files. Use find-and-replace across the folder
+(Cmd+Shift+F in VS Code) to catch them all.
+
+## Editing the nav or footer
+
+They are repeated in all six HTML files, since there is no build step. Change one,
+change all six. Cmd+Shift+F makes this quick.
 
 ## Colours and type
 
-Top of `styles.css`, in `:root`. Change one hex value and it updates everywhere.
+Top of `styles.css`, in `:root`.
 
 ```
 --magenta #FF3D9A    --violet #6C3BE8    --ice #5FD6D0
 --ink     #08071A    --vault  #140E33    --bone #EFEAF7
 ```
 
-## One-file version
+## The contact form
 
-```bash
-python3 build.py
-```
-
-Produces `purenorthvault-standalone.html` — the entire site including images in a
-single file you can email, put on a USB stick, or open anywhere offline.
-Deploy the multi-file version, not this one; it's ~900 KB and slower to load.
-# PureNorth
-# PureNorth
-# PureNorth
+Composes an email and opens the visitor's mail app. No backend to host or pay for.
+To get submissions in your inbox automatically instead, sign up at formspree.io and
+replace the `window.location.href` line in the submit handler with a `fetch()` POST
+to your endpoint.
